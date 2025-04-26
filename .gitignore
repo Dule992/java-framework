@@ -10,6 +10,12 @@ build/
 .idea/compiler.xml
 .idea/libraries/
 .idea/vcs.xml
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dictionaries
+.idea/jsLibraryMappings.xml
+.idea/gradle.xml
+.idea/uiDesigner.xml
 *.iws
 *.iml
 *.ipr
