@@ -3,18 +3,23 @@ package apiTests;
 import controllers.UserController;
 import io.restassured.response.Response;
 import models.User;
-import models.UserResponse;
-import models.UserStatus;
+import models.AddUserResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 import static testdata.TestData.DEFAULT_USER;
 import static testdata.TestData.INVALID_USER;
 
 public class PetUserTests {
+    UserController userController = new UserController();
+
     @Test
     void createUser() {
         String baseUrl = "https://petstore.swagger.io/v2/";
@@ -47,44 +52,31 @@ public class PetUserTests {
 
     @Test
     void checkUserResponseBody() {
+        String baseUrl = "https://petstore.swagger.io/v2/";
+        String body = """
+                {
+                  "id": 0,
+                  "username": "string",
+                  "firstName": "string",
+                  "lastName": "string",
+                  "email": "string",
+                  "password": "string",
+                  "phone": "string",
+                  "userStatus": 0
+                }""";
 
-        User user = new User(0, "username", "firstName", "lastName", "email", "password", "phone", 0);
-
-        UserController controller = new UserController();
-
-        Response response = controller.createUser(user);
-        response.getBody().prettyPrint();
-
-        User createdUser =  response.as(UserResponse.class);
-
-        Assertions.assertEquals(200, response.statusCode());
-        Assertions.assertEquals(200, createdUser.getCode());
-        Assertions.assertEquals("unknown", createdUser.getType());
-        Assertions.assertNotNull(createdUser.get());
-        Assertions.assertTrue(Long.getLong(createdUser.getMessage()) > 17121482345);
-    }
-
-    @Test
-    void createUserControllerTest() {
-        User user = new User(0,
-                "username",
-                "firstName",
-                "lastName",
-                "email",
-                "password",
-                "phone",
-                UserStatus.ACTIVE);
-
-        UserController userController = new UserController();
-
-        Response response = userController.createUser(user);
-        AddUserResponse createdUserResponse = response.as(AddUserResponse.class);
-
-
-        Assertions.assertEquals(200, response.statusCode());
-        Assertions.assertEquals(200, createdUserResponse.getCode());
-        Assertions.assertEquals("unknown", createdUserResponse.getType());
-        Assertions.assertFalse(createdUserResponse.getMessage().isEmpty());
+        given()
+            .baseUri(baseUrl)
+            .header("accept", "application/json")
+            .header("Content-Type", "application/json")
+            .body(body).
+        when()
+            .post("user")
+        .then()
+            .statusCode(200)
+            .body("code", equalTo(200))
+            .body("type", equalTo("unknown"))
+            .body("message", notNullValue(String.class));
     }
 
     @Test
@@ -92,11 +84,21 @@ public class PetUserTests {
         Response response = userController.createUser(DEFAULT_USER);
         AddUserResponse createdUserResponse = response.as(AddUserResponse.class);
 
-
         Assertions.assertEquals(200, response.statusCode());
         Assertions.assertEquals(200, createdUserResponse.getCode());
         Assertions.assertEquals("unknown", createdUserResponse.getType());
         Assertions.assertFalse(createdUserResponse.getMessage().isEmpty());
+    }
+
+    @Test
+    void createInvalidUserControllerTest() {
+        Response response = userController.createUser(INVALID_USER);
+        AddUserResponse createdUserResponse = response.as(AddUserResponse.class);
+
+        Assertions.assertEquals(200, response.statusCode());
+        Assertions.assertEquals(200, createdUserResponse.getCode());
+        Assertions.assertEquals("unknown", createdUserResponse.getType());
+        Assertions.assertEquals("0", createdUserResponse.getMessage());
     }
 
     static Stream<User> users() {
@@ -109,12 +111,9 @@ public class PetUserTests {
         Response response = userController.createUser(user);
         AddUserResponse createdUserResponse = response.as(AddUserResponse.class);
 
-
         Assertions.assertEquals(200, response.statusCode());
         Assertions.assertEquals(200, createdUserResponse.getCode());
         Assertions.assertEquals("unknown", createdUserResponse.getType());
         Assertions.assertFalse(createdUserResponse.getMessage().isEmpty());
     }
-
-
 }

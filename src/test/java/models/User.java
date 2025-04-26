@@ -1,11 +1,13 @@
 package models;
 
-
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import org.openqa.selenium.UsernameAndPassword;
+import models.enums.UserStatus;
 
 @Data
+@AllArgsConstructor
+@Builder
 public class User {
     private int id;
     private String username;
@@ -14,11 +16,5 @@ public class User {
     private String email;
     private String password;
     private String phone;
-    private UserStatus userStatus;
-
-    public User(int i, String username, String firstName, String lastName, String email, String password, String phone, UserStatus userStatus) {
-    }
-
-    public static UsernameAndPassword builder() {
-    }
+    private int userStatus;
 }
