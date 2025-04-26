@@ -1,5 +1,6 @@
 package controllers;
 
+import constants.CommonConstants;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import models.User;
@@ -9,19 +10,14 @@ import static io.restassured.http.ContentType.JSON;
 
 
 public class UserController {
-
-
     RequestSpecification requestSpecification;
-    private static final String BASE_URI = "https://petstore.swagger.io/v2/";
-    private static final String USER_ENDPOINT = "user";
-
 
     public UserController() {
         this.requestSpecification = given()
                 .log().all()
                 .accept(JSON)
                 .contentType(JSON)
-                .baseUri(BASE_URI);
+                .baseUri(CommonConstants.BASE_URI);
     }
 
 
@@ -29,7 +25,7 @@ public class UserController {
         return given(this.requestSpecification)
                 .body(user)
                 .when()
-                .post(USER_ENDPOINT)
+                .post(CommonConstants.USER_ENDPOINT)
                 .andReturn();
     }
 
@@ -38,7 +34,7 @@ public class UserController {
         return given(this.requestSpecification)
                 .body(user)
                 .when()
-                .put(USER_ENDPOINT + "/" + user.getUsername())
+                .put(CommonConstants.USER_ENDPOINT + "/" + user.getUsername())
                 .andReturn();
     }
 
@@ -46,7 +42,7 @@ public class UserController {
     public Response getUserByUsername(String username) {
         return given(this.requestSpecification)
                 .when()
-                .get(USER_ENDPOINT + "/" + username)
+                .get(CommonConstants.USER_ENDPOINT + "/" + username)
                 .andReturn();
     }
 
@@ -54,8 +50,7 @@ public class UserController {
     public Response deleteUserByUsername(String username) {
         return given(this.requestSpecification)
                 .when()
-                .delete(USER_ENDPOINT + "/" + username)
+                .delete(CommonConstants.USER_ENDPOINT + "/" + username)
                 .andReturn();
     }
-
 }

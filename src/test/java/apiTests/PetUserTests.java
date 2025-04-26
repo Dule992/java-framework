@@ -8,9 +8,11 @@ import models.UserStatus;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.stream.Stream;
+
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
+import static testdata.TestData.DEFAULT_USER;
+import static testdata.TestData.INVALID_USER;
 
 public class PetUserTests {
     @Test
@@ -84,5 +86,35 @@ public class PetUserTests {
         Assertions.assertEquals("unknown", createdUserResponse.getType());
         Assertions.assertFalse(createdUserResponse.getMessage().isEmpty());
     }
+
+    @Test
+    void createUserControllerTest() {
+        Response response = userController.createUser(DEFAULT_USER);
+        AddUserResponse createdUserResponse = response.as(AddUserResponse.class);
+
+
+        Assertions.assertEquals(200, response.statusCode());
+        Assertions.assertEquals(200, createdUserResponse.getCode());
+        Assertions.assertEquals("unknown", createdUserResponse.getType());
+        Assertions.assertFalse(createdUserResponse.getMessage().isEmpty());
+    }
+
+    static Stream<User> users() {
+        return Stream.of(DEFAULT_USER, INVALID_USER);
+    }
+    
+    @ParameterizedTest
+    @MethodSource("users")
+    void createUserParametrizedTest(User user) {
+        Response response = userController.createUser(user);
+        AddUserResponse createdUserResponse = response.as(AddUserResponse.class);
+
+
+        Assertions.assertEquals(200, response.statusCode());
+        Assertions.assertEquals(200, createdUserResponse.getCode());
+        Assertions.assertEquals("unknown", createdUserResponse.getType());
+        Assertions.assertFalse(createdUserResponse.getMessage().isEmpty());
+    }
+
 
 }
