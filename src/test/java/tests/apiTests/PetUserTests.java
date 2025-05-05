@@ -1,10 +1,12 @@
-package apiTests;
+package tests.apiTests;
 
 import controllers.UserController;
+import io.qameta.allure.Story;
 import io.restassured.response.Response;
 import models.User;
 import models.AddUserResponse;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -17,6 +19,8 @@ import static org.hamcrest.Matchers.notNullValue;
 import static testdata.TestData.DEFAULT_USER;
 import static testdata.TestData.INVALID_USER;
 
+@Story("API tests")
+@Tag("api")
 public class PetUserTests {
     UserController userController = new UserController();
 
